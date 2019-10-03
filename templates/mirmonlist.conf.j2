@@ -1,0 +1,11 @@
+project_name CentOS
+project_url http://www.centos.org
+mirror_list /var/lib/centos-mirrors/mirmon_centoslist
+web_page /var/www/mirmon-status/mirmon_centos.html
+icons /mirmon/icons
+probe /usr/bin/wget -q --max-redirect 0 -O - -T %TIMEOUT% -t 1 %URL%TIME
+state /var/lib/centos-mirrors/mirmonlist.state
+countries /var/lib/centos-mirrors/countries.list
+show 1
+project_logo https://www.centos.org/images/logo_small.png
+

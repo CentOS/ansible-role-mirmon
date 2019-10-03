@@ -1,0 +1,84 @@
+#!/bin/bash
+
+# This script would server as a master launching job for mirrorlist/isolist crawler
+# It can be use to itself launch multiple scripts through cron
+# Verify if previous crawler script is still running and if not relaunch it
+# it will also parse /etc/mirmon/centos-mirrors.cfg to know the mirrorlists to push to and also if we want to push or not
+# See usage() for required parameters
+
+source /etc/mirmon/centos-mirrors.cfg
+
+synctime=$(date +%Y%m%d%H%M)
+
+function usage() {
+cat << EOF
+
+You need to call the script like this : $0 -arguments
+ -s : script to call (full path / Required)
+ -a : arguments to pass to script (Optional)
+
+EOF
+}
+
+function varcheck() {
+if [ -z "$1" ] ; then
+        usage
+        exit 1
+fi
+}
+
+while getopts "hs:a:" option
+do
+  case ${option} in
+    h)
+      usage
+      exit 1
+      ;;
+    s)
+      script=${OPTARG}
+      ;;
+    a)
+      script_args=${OPTARG}
+      ;;
+    ?)
+      usage
+      exit
+      ;;
+  esac
+done
+
+varcheck ${script}
+
+
+pid_name=$(echo $script|rev | cut -f 1 -d '/'|rev|tr [:blank:] '-')
+pid_args=$(echo $script_args|tr [:blank:] '-'|tr ',' '-')
+
+if [ -z "$pid_args" ] ;then
+  pidfile="/var/tmp/${pid_name}.pid"  
+else
+  pidfile="/var/tmp/${pid_name}-${pid_args}.pid"
+fi
+
+
+if [ -f $pidfile ]; then
+  echo "old program still running,  nothing to do .."
+else
+  echo $$ > $pidfile
+  #(exec "$script" "$script_args") >/dev/null 2>&1
+  $script $script_args
+  wait
+  /bin/rm -f $pidfile
+fi
+
+# Now that we finished with crawler script, decide to push or not, based on config
+if [ "$push_to_mirrorlisthosts" = "true" ] ; then
+  for mirror in $mirrorhosts; do
+    rsync --delete-after --timeout=1200 -avzH /home/centos-mirrorlists/ ${mirror}::${rsync_target_module}/ > /home/centos-mirrorlists/logs/$synctime.crawler-${pid_name}-${mirror}.log 2>&1
+  done
+else
+  echo "Not pushing to isoredirect nodes as PUSH_TO_MIRRORLISTHOSTS set to false" > /home/centos-mirrorlists/logs/$synctime.crawler-${pid_name}.log 2>&1
+
+fi
+
+# cleaning up old log files
+find /home/centos-mirrorlists/logs/ -type f -mmin +240 -exec /bin/rm '{}' \;

@@ -1,1 +1,29 @@
 # Defaults variables for role mirmon
+
+# MySQL DB settings
+mirmon_db_name: mirmon
+mirmon_db_user: mirmon
+mirmon_db_pass: 7Q7tNxDiwQlNw34I5W
+
+
+# Official mirrorlists/isoredirect nodes to which we want to push lists
+mirmon_mirrorlist_servers:
+  - ml1.dev.centos.org
+  - ml2.dev.centos.org
+# Do we want to push after each crawler process
+mirmon_push_to_mirrorlist_servers: False
+
+# Which local user should launch crawler processes
+mirmon_local_user: centos
+mirmon_local_path: /home/centos-mirrorlists
+
+# Which centos releases we want for mirrorlists
+mirmon_mirrorlist_current_releases:
+  - 6.10 centos
+  - 7.7.1908 centos
+  - 7.7.1908 altarch
+  - 8.0.1905 centos
+
+# Which centos releases we need to clear for mirrorlists (old releases and no need to crawl anymore)
+mirmon_mirrorlist_old_releases:
+  - 6.9 centos 

@@ -1,0 +1,259 @@
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8 */;
+/*!40103 SET @OLD_TIME_ZONE=@@TIME_ZONE */;
+/*!40103 SET TIME_ZONE='+00:00' */;
+/*!40014 SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0 */;
+/*!40014 SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0 */;
+/*!40101 SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='NO_AUTO_VALUE_ON_ZERO' */;
+/*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
+
+--
+-- Table structure for table `countries`
+--
+
+DROP TABLE IF EXISTS `countries`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `countries` (
+  `location_major` varchar(20) NOT NULL DEFAULT '',
+  `locmajidx` int(11) NOT NULL DEFAULT '0',
+  `location_minor` varchar(20) NOT NULL DEFAULT '',
+  `cc` char(2) NOT NULL DEFAULT '',
+  `continent` enum('us','eu','af','oc','ap','sa') NOT NULL DEFAULT 'us',
+  PRIMARY KEY (`location_minor`),
+  UNIQUE KEY `cc_locminor` (`cc`,`location_minor`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `ipaddresses`
+--
+
+DROP TABLE IF EXISTS `ipaddresses`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `ipaddresses` (
+  `ip_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `mirror_id` mediumint(8) unsigned DEFAULT NULL,
+  `ip` varchar(43) NOT NULL,
+  `expires` date DEFAULT NULL,
+  `asn` int(10) unsigned DEFAULT NULL,
+  PRIMARY KEY (`ip_id`),
+  UNIQUE KEY `mirrorid_ip` (`mirror_id`,`ip`),
+  KEY `mirror_id` (`mirror_id`),
+  KEY `ip` (`ip`),
+  KEY `asn` (`asn`),
+  KEY `ip_idx` (`ip`)
+) ENGINE=MyISAM AUTO_INCREMENT=1919 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `isos`
+--
+
+DROP TABLE IF EXISTS `isos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `isos` (
+  `iso_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `filename` varchar(150) NOT NULL,
+  `arch` varchar(20) NOT NULL,
+  `altarch` tinyint(3) unsigned NOT NULL,
+  PRIMARY KEY (`iso_id`),
+  UNIQUE KEY `uniqkey` (`filename`,`altarch`)
+) ENGINE=MyISAM AUTO_INCREMENT=106 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `master_iso_fileinfo`
+--
+
+DROP TABLE IF EXISTS `master_iso_fileinfo`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `master_iso_fileinfo` (
+  `iso_id` mediumint(8) unsigned NOT NULL,
+  `version` varchar(20) NOT NULL,
+  `value` varchar(255) NOT NULL,
+  `checked` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`iso_id`,`version`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `master_timestamps`
+--
+
+DROP TABLE IF EXISTS `master_timestamps`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `master_timestamps` (
+  `repo_id` mediumint(8) unsigned NOT NULL,
+  `version` varchar(20) NOT NULL,
+  `value` varchar(100) NOT NULL,
+  `checked` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`repo_id`,`version`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `mirrors`
+--
+
+DROP TABLE IF EXISTS `mirrors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `mirrors` (
+  `mirror_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `name` varchar(100) NOT NULL DEFAULT '',
+  `location-major` varchar(20) NOT NULL DEFAULT '',
+  `locmajidx` int(11) NOT NULL DEFAULT '0',
+  `location-minor` varchar(20) NOT NULL DEFAULT '',
+  `http` varchar(127) NOT NULL DEFAULT '',
+  `https` varchar(127) NOT NULL DEFAULT '',
+  `ftp` varchar(127) NOT NULL DEFAULT '',
+  `rsync` varchar(127) NOT NULL DEFAULT '',
+  `speed` enum('T1','T2','T3') NOT NULL DEFAULT 'T1',
+  `bandwidth` varchar(10) NOT NULL DEFAULT '',
+  `status` enum('Active','Disabled','Dead','Master','Gone') NOT NULL DEFAULT 'Active',
+  `state` enum('current','behind','out of date','not syncing','timeout','broken') NOT NULL DEFAULT 'current',
+  `Contact-name` varchar(40) NOT NULL DEFAULT '',
+  `Contact-tel` varchar(40) NOT NULL DEFAULT '',
+  `contact-email` varchar(127) NOT NULL DEFAULT '',
+  `comments` varchar(16384) NOT NULL DEFAULT '',
+  `access-ips-or-hosts` varchar(128) NOT NULL DEFAULT '',
+  `access-hosts` varchar(128) NOT NULL DEFAULT '',
+  `Type` enum('Direct','Indirect','Personal','Internal','Master','Slave') NOT NULL DEFAULT 'Direct',
+  `restructured` enum('no','yes') NOT NULL DEFAULT 'yes',
+  `centostext` varchar(20) NOT NULL DEFAULT '',
+  `url` varchar(128) NOT NULL DEFAULT '',
+  `info_note` varchar(40) NOT NULL DEFAULT '',
+  `notes_private` varchar(16384) NOT NULL DEFAULT '',
+  `infoblock` varchar(128) NOT NULL DEFAULT '',
+  `graphic_url` varchar(128) NOT NULL DEFAULT '',
+  `centos_2` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `centos_3` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `centos_4` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `centos_5` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `centos_6` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `centos_all` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `arch_all` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `arches` varchar(64) NOT NULL DEFAULT '',
+  `dvd-iso` enum('no','yes') NOT NULL DEFAULT 'no',
+  `dvd_3` enum('no','yes') NOT NULL DEFAULT 'no',
+  `dvd_4` enum('no','yes') NOT NULL DEFAULT 'no',
+  `dvd_5` enum('no','yes') NOT NULL DEFAULT 'no',
+  `dvd_6` enum('no','yes') NOT NULL DEFAULT 'yes',
+  `dvd-iso-host` enum('no','yes') NOT NULL DEFAULT 'yes',
+  `rsync-dvd-host` varchar(127) NOT NULL DEFAULT '',
+  `cc` char(2) NOT NULL DEFAULT '',
+  `continent` enum('us','eu','af','oc','ap','sa') NOT NULL DEFAULT 'us',
+  `centos_code` char(2) NOT NULL DEFAULT '',
+  `priority` int(11) NOT NULL DEFAULT '0',
+  `use_in_mirrorlists` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `use_https_for_isos` enum('yes','no') NOT NULL DEFAULT 'yes',
+  `altarch` enum('no','yes') NOT NULL DEFAULT 'no',
+  `altarch_http` varchar(127) NOT NULL DEFAULT '',
+  `altarch_https` varchar(127) NOT NULL DEFAULT '',
+  `altarch_ftp` varchar(127) NOT NULL DEFAULT '',
+  `altarch_rsync` varchar(127) NOT NULL DEFAULT '',
+  PRIMARY KEY (`mirror_id`),
+  UNIQUE KEY `name` (`name`),
+  KEY `cc_idx` (`cc`),
+  KEY `continent_idx` (`continent`),
+  KEY `centos_code_idx` (`centos_code`),
+  KEY `altarch_idx` (`altarch`),
+  KEY `type_idx` (`Type`),
+  KEY `status_idx` (`status`),
+  KEY `http_idx` (`http`(25)),
+  KEY `locminor_idx` (`location-minor`),
+  KEY `cc_status_idx` (`cc`,`status`),
+  KEY `altarch_status_idx` (`altarch`,`status`),
+  KEY `cc_locminor_idx` (`cc`,`location-minor`),
+  KEY `https_idx` (`https`(26))
+) ENGINE=MyISAM AUTO_INCREMENT=1530 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `repos`
+--
+
+DROP TABLE IF EXISTS `repos`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `repos` (
+  `repo_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
+  `major_release` tinyint(3) unsigned NOT NULL,
+  `path` varchar(100) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `arch` varchar(20) NOT NULL,
+  `altarch` tinyint(3) unsigned NOT NULL,
+  `enabled` enum('no','yes') NOT NULL DEFAULT 'yes',
+  PRIMARY KEY (`repo_id`),
+  UNIQUE KEY `uniqkey` (`major_release`,`path`,`altarch`)
+) ENGINE=MyISAM AUTO_INCREMENT=193 DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `users`
+--
+
+DROP TABLE IF EXISTS `users`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `users` (
+  `username` varchar(40) NOT NULL DEFAULT '',
+  `name` varchar(80) NOT NULL DEFAULT '',
+  `email` varchar(80) NOT NULL DEFAULT '',
+  `ip-address` varchar(20) NOT NULL DEFAULT '',
+  `groups` varchar(80) NOT NULL DEFAULT '',
+  PRIMARY KEY (`username`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `valid_iso_mirrors`
+--
+
+DROP TABLE IF EXISTS `valid_iso_mirrors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `valid_iso_mirrors` (
+  `iso_id` mediumint(8) unsigned NOT NULL,
+  `version` varchar(20) NOT NULL,
+  `mirror_id` mediumint(8) unsigned NOT NULL,
+  `proto` enum('http','https','ftp','rsync') NOT NULL,
+  `checked` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`iso_id`,`version`,`mirror_id`,`proto`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Table structure for table `valid_mirrors`
+--
+
+DROP TABLE IF EXISTS `valid_mirrors`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `valid_mirrors` (
+  `repo_id` mediumint(8) unsigned NOT NULL,
+  `version` varchar(20) NOT NULL,
+  `mirror_id` mediumint(8) unsigned NOT NULL,
+  `ipver` enum('IPv4','IPv6') NOT NULL,
+  `proto` enum('http','https','ftp','rsync') NOT NULL,
+  `checked` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`repo_id`,`version`,`mirror_id`,`ipver`,`proto`)
+) ENGINE=MyISAM DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+/*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
+
+/*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
+/*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
+/*!40014 SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS */;
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+/*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
+

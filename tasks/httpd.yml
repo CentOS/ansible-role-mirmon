@@ -1,0 +1,23 @@
+- import_role:                                                                                                    
+    name: httpd
+
+- name: Ensuring we have a document root for vhost
+  file:
+    path: /var/www/mirmon-status
+    state: directory
+    owner: "{{ mirmon_local_user }}"
+
+- name: mirmon httpd vhost
+  template:
+    src: 100_mirmon_status.conf.j2
+    dest: /etc/httpd/conf.d/100_mirmon_status.conf
+  notify:
+    - restart_httpd
+
+- name: index html symlink
+  file:
+    path: /var/www/mirmon-status/index.html
+    src: /var/www/mirmon-status/mirmon.html
+    state: link
+  tags:
+    - link

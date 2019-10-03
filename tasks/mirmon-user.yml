@@ -1,0 +1,24 @@
+- name: Ensuring we have local unprivileged user owning mirmon content
+  user:
+    name: "{{ mirmon_local_user }}"
+    comment: "Local CentOS mirmon user"
+    home: "/home/{{ mirmon_local_user }}-home/"
+
+- name: Ensuring we have a place to store scripts (legacy compat)
+  file:
+    path: "/home/{{ mirmon_local_user }}-scripts"
+    state: directory
+    owner: "{{ mirmon_local_user }}"
+    group: "{{ mirmon_local_user }}"
+
+- name: Ensuring we have a place to store mirrorlists files
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ mirmon_local_user }}"
+    group: "{{ mirmon_local_user }}"
+    setype: user_home_dir_t
+    mode: 0755
+  with_items:
+    - "{{ mirmon_local_path }}"
+    - "{{ mirmon_local_path }}/logs"

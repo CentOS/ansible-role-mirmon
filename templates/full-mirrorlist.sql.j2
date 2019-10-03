@@ -1,0 +1,1 @@
+SELECT `location-major`,`location-minor`,`name`,`url`,`http`,`https`,`rsync` FROM `mirrors` WHERE `status` = "Active" AND (http>'' OR ftp>'' OR rsync>'' OR https>'') AND `state` = "Current" and `location-major` != ""  ORDER BY `location-major`,`location-minor`,`name` INTO OUTFILE '/tmp/full-mirrorlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n'

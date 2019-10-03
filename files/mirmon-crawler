@@ -1,0 +1,14 @@
+#!/bin/bash
+
+pushd /var/lib/centos-mirrors/
+./get_centos.pl
+./get_centoslist.pl
+mirmon -c /etc/mirmon/mirmon.conf -q -get update
+./put_centos.pl
+mirmon -c /etc/mirmon/mirmonlist.conf -q -get update
+./put_centoslist.pl
+popd
+
+# Cleaning-up old mirmon logs
+find /home/centos-mirrorlists/logs/ -amin +600 -name '*' -exec rm -rf {} \;
+

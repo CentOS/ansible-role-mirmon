@@ -1,0 +1,2 @@
+SELECT `location-major`,`location-minor`,`name`,`url`,`altarch_http`,`altarch_https`,`altarch_rsync` FROM `mirrors` WHERE `altarch`='yes' AND `status` = "Active" AND `state` = "Current" and `location-major` != ""  ORDER BY `location-major`,`location-minor`,`name` INTO OUTFILE '/tmp/full-altarchlist.csv' FIELDS TERMINATED BY ',' ENCLOSED BY '"' LINES TERMINATED BY '\n'
+

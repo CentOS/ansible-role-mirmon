@@ -1,0 +1,28 @@
+#!/bin/bash
+
+SYNCTIME="$(date)"
+tmp_dir="$(ls /tmp/|egrep -i 'mariadb.service|mysql.service')"
+
+for list in full-mirrorlist full-altarchlist ; do
+
+  if [ -e /tmp/$tmp_dir/tmp/${list}.csv ]; then 
+    rm -f /tmp/$tmp_dir/tmp/${list}.csv
+  fi
+
+  # Running with priv to be able to read into systemd private tmp directory
+  mysql {{ mirmon_db_name }} < /var/lib/centos-mirrors/${list}.sql
+
+  echo "" >> /tmp/$tmp_dir/tmp/${list}.csv
+  echo "$SYNCTIME" >> /tmp/$tmp_dir/tmp/${list}.csv
+  sed -i '1s/^/"Region","Country","Sponsor","Sponsor URL","http mirror link","ftp mirror link","rsync mirror link"\n/' /tmp/$tmp_dir/tmp/${list}.csv
+
+
+ /bin/cp /tmp/$tmp_dir/tmp/${list}.csv /var/www/mirmon-status/
+
+done
+/sbin/restorecon -R /var/www/mirmon-status/
+
+
+
+
+

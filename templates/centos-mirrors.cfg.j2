@@ -1,0 +1,7 @@
+# This file contains the needed variables for master cron job for mirror/iso crawler
+# it's an Ansible, so don't edit it !
+
+mirrorhosts="{% for server in mirmon_mirrorlist_servers %}{{ server }} {% endfor %}"
+push_to_mirrorlisthosts="{{ mirmon_push_to_mirrorlist_servers|string|lower }}" # true or false
+rsync_target_module="mirrorlists"
+

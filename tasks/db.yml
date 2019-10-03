@@ -1,0 +1,22 @@
+- include_role:
+    name: mysql
+
+- name: Creating mandatory (local) Zabbix DB 
+  include_role: 
+    name: mysql
+    tasks_from: db
+  vars:
+    mysql_db_user: "{{ mirmon_db_user }}"
+    mysql_db_pass: "{{ mirmon_db_pass }}"
+    mysql_db_name: "{{ mirmon_db_name }}"
+  register: mysql_created_db  
+  tags:
+    - db    
+
+- name: Populating empty DB with schema
+  mysql_db:
+    name: "{{ mirmon_db_name }}"
+    state: import
+    target: /var/lib/centos-mirrors/mirmon-schema.sql
+  when: mysql_created_db is changed
+

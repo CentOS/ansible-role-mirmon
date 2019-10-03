@@ -1,0 +1,24 @@
+<VirtualHost *:80>
+     ServerAdmin webmaster@centos.org
+     ServerName mirror-status.centos.org
+     ServerAlias mirror-status.centos.org
+     DocumentRoot /var/www/mirmon-status
+     IndexOptions +FancyIndexing
+
+     Header always set X-Frame-Options "SAMEORIGIN"
+     Header always set X-Xss-Protection "1; mode=block"
+     Header always set X-Content-Type-Options "nosniff"
+     Header always set Referrer-Policy "same-origin"
+
+#   RewriteEngine On
+#   RewriteCond $1 !^.well-known
+#   RewriteCond %{HTTPS} !=on
+#   RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+
+<Location "/.well-known/">
+    ProxyPass "http://cephas.centos.org/.well-known/"
+</Location>
+
+
+</VirtualHost>
+

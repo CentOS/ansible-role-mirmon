@@ -1,1 +1,127 @@
 # Defaults tasks for role mirmon
+- include_tasks: mirmon-user.yml
+- include_tasks: httpd.yml
+
+- name: Ensuring we have a place to store files
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ mirmon_local_user }}"
+  with_items:
+    - /var/lib/centos-mirrors
+    - /etc/mirmon
+
+- name: Distributing some templates for mirmon
+  template:
+    src: "{{ item }}.j2"
+    dest: "/var/lib/centos-mirrors/{{ item }}"
+  with_items:
+    - mirmon-schema.sql
+    - full-mirrorlist.sql 
+    - full-altarchlist.sql
+    - extract_mirrorlist.sh
+  tags:
+    - templates
+
+- name: Ensuring some files exist for mirmon state
+  file:
+    path: "/var/lib/centos-mirrors/{{ item }}"
+    state: touch
+    owner: "{{ mirmon_local_user }}"
+  with_items:
+    - mirmon.state
+    - mirmonlist.state
+
+- include_tasks: db.yml
+
+- name: Ensuring we have some needed pkgs installed
+  yum: 
+    name: "{{ item }}"
+    state: latest
+  with_items:
+    - mirmon
+    - mirmon-httpd
+    - perl-libwww-perl
+    - perl-Socket6
+    - perl-IO-Socket-INET6
+    - perl-DBI
+    - perl-DBD-MySQL
+    - perl-Config-Simple
+
+- name: Configuring mirmon/crawler files
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/mirmon/{{ item }}"
+  with_items:
+    - centos-mirrors.cfg
+    - centos-ml.cfg
+    - mirmon.conf
+    - mirmonlist.conf
+  tags:
+    - templates
+
+- name: Distributing correct geo_cc.pm custom perl module
+  copy:
+    src: geo_cc.pm
+    dest: /usr/share/perl5/vendor_perl/geo_cc.pm
+  tags:
+    - geo
+
+- name: mirmon wrapper scripts
+  copy:
+    src: "{{ item }}"
+    dest: "/var/lib/centos-mirrors/{{ item }}"
+    mode: 0755
+  with_items:
+    - get_centos.pl
+    - put_centos.pl
+    - get_centoslist.pl
+    - put_centoslist.pl
+    - countries.list
+    - mirmon-crawler
+    - centos-crawler
+    - makeisolists-combined.pl
+    - makemirrorlists-combined.pl
+  tags:
+    - mirmon
+
+- name: Extracting mirrorlist for website
+  cron:
+    name: Extracting mirrorlists for website
+    job: "bash /var/lib/centos-mirrors/extract_mirrorlist.sh"
+    minute: "*/5"
+  tags:
+    - cron
+    
+- name: Various cron jobs for mirmon
+  cron:
+    name: "mirmon - {{ item }}"
+    job: "{{ item }}"
+    user: "{{ mirmon_local_user }}"
+    minute: "*/20"
+  with_items:
+    - /var/lib/centos-mirrors/mirmon-crawler
+  tags:
+    - cron
+
+- name: CentOS mirrorlists cron jobs
+  cron:
+    name: "Mirrorlist - {{ item }}"
+    job: "/var/lib/centos-mirrors/centos-crawler -s /var/lib/centos-mirrors/makemirrorlists-combined.pl -a \"{{ item }}\" >/dev/null 2>&1"
+    user: "{{ mirmon_local_user }}"
+    minute: "*/5"
+  with_items: "{{ mirmon_mirrorlist_current_releases }}"
+  tags:
+    - cron
+
+- name: Removing mirrorlists cron jobs for previous releases
+  cron:
+    name: "Mirrorlist - {{ item }}"
+    job: "/var/lib/centos-mirrors/centos-crawler -s /var/lib/centos-mirrors/makemirrorlists-combined.pl -a \"{{ item }}\" >/dev/null 2>&1"
+    user: "{{ mirmon_local_user }}"
+    minute: "*/5"
+    state: absent
+  with_items: "{{ mirmon_mirrorlist_old_releases }}"
+  tags:
+    - cron
+
