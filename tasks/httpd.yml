@@ -14,10 +14,3 @@
   notify:
     - restart_httpd
 
-- name: index html symlink
-  file:
-    path: /var/www/mirmon-status/index.html
-    src: /var/www/mirmon-status/mirmon.html
-    state: link
-  tags:
-    - link

@@ -9,6 +9,11 @@ mirmon -c /etc/mirmon/mirmonlist.conf -q -get update
 ./put_centoslist.pl
 popd
 
+pushd /var/www/mirmon-status
+cat /var/www/centos/header/header.html > index.html
+sed '1,11d' mirmon.html >> index.html
+popd
+
 # Cleaning-up old mirmon logs
 find /home/centos-mirrorlists/logs/ -amin +600 -name '*' -exec rm -rf {} \;
 

@@ -124,4 +124,24 @@
   with_items: "{{ mirmon_mirrorlist_old_releases }}"
   tags:
     - cron
+- name: CentOS isolists cron jobs
+  cron:
+    name: "Isolist - {{ item }}"
+    job: "/var/lib/centos-mirrors/centos-crawler -s /var/lib/centos-mirrors/makeisolists-combined.pl -a \"{{ item }}\" >/dev/null 2>&1"
+    user: "{{ mirmon_local_user }}"
+    minute: "*/5"
+  with_items: "{{ mirmon_isolist_current_releases }}"
+  tags:
+    - cron
+
+- name: Removing isolists cron jobs for previous releases
+  cron:
+    name: "Isolist - {{ item }}"
+    job: "/var/lib/centos-mirrors/centos-crawler -s /var/lib/centos-mirrors/makeisolists-combined.pl -a \"{{ item }}\" >/dev/null 2>&1"
+    user: "{{ mirmon_local_user }}"
+    minute: "*/5"
+    state: absent
+  with_items: "{{ mirmon_isolist_old_releases }}"
+  tags:
+    - cron
 

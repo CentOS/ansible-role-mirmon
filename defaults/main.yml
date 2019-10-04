@@ -18,6 +18,7 @@ mirmon_local_user: centos
 mirmon_local_path: /home/centos-mirrorlists
 
 # Which centos releases we want for mirrorlists
+# per perl/mysql code, release and path/column to query for
 mirmon_mirrorlist_current_releases:
   - 6.10 centos
   - 7.7.1908 centos
@@ -27,3 +28,16 @@ mirmon_mirrorlist_current_releases:
 # Which centos releases we need to clear for mirrorlists (old releases and no need to crawl anymore)
 mirmon_mirrorlist_old_releases:
   - 6.9 centos 
+  
+# Which centos releases we want for isolists
+# per perl/mysql code, release and path/column and arches
+mirmon_isolist_current_releases:
+  - 6.10 centos i386,x86_64
+  - 7.7.1908 altarch aarch64,armhfp,i386,power9,ppc64,ppc64le
+  - 7.7.1908 centos x86_64
+  - 8.0.1905 centos x86_64,aarch64,ppc64le
+  - 8-stream centos x86_64,aarch64,ppc64le
+
+# Which centos releases we need to clear for mirrorlists (old releases and no need to crawl anymore)
+mirmon_isolist_old_releases:
+  - 6.9 centos i386,x86_64
