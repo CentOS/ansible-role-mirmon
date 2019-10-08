@@ -21,4 +21,12 @@
     mode: 0755
   with_items:
     - "{{ mirmon_local_path }}"
+    - "{{ mirmon_local_path }}/ipv4"
+    - "{{ mirmon_local_path }}/ipv4/centos"
+    - "{{ mirmon_local_path }}/ipv4/altarch"
+    - "{{ mirmon_local_path }}/ipv6"
+    - "{{ mirmon_local_path }}/ipv6/centos"
+    - "{{ mirmon_local_path }}/ipv6/altarch"
     - "{{ mirmon_local_path }}/logs"
+
+

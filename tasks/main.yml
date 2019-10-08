@@ -1,6 +1,8 @@
 # Defaults tasks for role mirmon
 - include_tasks: mirmon-user.yml
 - include_tasks: httpd.yml
+  tags:
+    - httpd
 
 - name: Ensuring we have a place to store files
   file:
@@ -144,4 +146,44 @@
   with_items: "{{ mirmon_isolist_old_releases }}"
   tags:
     - cron
+
+- name: Correct ipv4 major symlink for centos releases
+  file: 
+    dest: "{{ mirmon_local_path }}/ipv4/centos/{{ item.major }}"
+    src: "{{ item.release }}"
+    state: link
+    force: yes
+  with_items: "{{ mirmon_centos_releases }}" 
+  tags:
+    - links
+
+- name: Correct ipv6 major symlink for centos releases
+  file: 
+    dest: "{{ mirmon_local_path }}/ipv6/centos/{{ item.major }}"
+    src: "{{ item.release }}"
+    state: link
+    force: yes
+  with_items: "{{ mirmon_centos_releases }}" 
+  tags:
+    - links
+
+- name: Correct ipv4 major symlink for altarch releases
+  file: 
+    dest: "{{ mirmon_local_path }}/ipv4/altarch/{{ item.major }}"
+    src: "{{ item.release }}"
+    state: link
+    force: yes
+  with_items: "{{ mirmon_centos_releases }}" 
+  tags:
+    - links
+
+- name: Correct ipv6 major symlink for altarch releases
+  file: 
+    dest: "{{ mirmon_local_path }}/ipv6/altarch/{{ item.major }}"
+    src: "{{ item.release }}"
+    state: link
+    force: yes
+  with_items: "{{ mirmon_centos_releases }}" 
+  tags:
+    - links
 

@@ -1,7 +1,7 @@
 <VirtualHost *:80>
      ServerAdmin webmaster@centos.org
-     ServerName mirror-status.centos.org
-     ServerAlias mirror-status.centos.org
+     ServerName {{ mirmon_public_hostname }}
+     ServerAlias {{ inventory_hostname }}
      DocumentRoot /var/www/mirmon-status
      IndexOptions +FancyIndexing
 
@@ -10,10 +10,12 @@
      Header always set X-Content-Type-Options "nosniff"
      Header always set Referrer-Policy "same-origin"
 
-#   RewriteEngine On
-#   RewriteCond $1 !^.well-known
-#   RewriteCond %{HTTPS} !=on
-#   RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+{% if mirmon_https %}
+   RewriteEngine On
+   RewriteCond $1 !^.well-known
+   RewriteCond %{HTTPS} !=on
+   RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+{% endif %} 
 
 <Location "/.well-known/">
     ProxyPass "http://cephas.centos.org/.well-known/"

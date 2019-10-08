@@ -1,5 +1,12 @@
 - import_role:                                                                                                    
     name: httpd
+  when: not mirmon_https
+
+- import_role:
+    name: httpd
+  vars:
+    httpd_tls: True
+  when: mirmon_https
 
 - name: Ensuring we have a document root for vhost
   file:
@@ -13,4 +20,25 @@
     dest: /etc/httpd/conf.d/100_mirmon_status.conf
   notify:
     - restart_httpd
+
+- name: Configuring https for mirmon
+  template:
+    src: "{{ item }}.j2"
+    dest: "/etc/httpd/conf.d/{{ item }}"
+  notify:
+    - restart_httpd
+  with_items:
+    - ssl-mirmon.conf
+  when: mirmon_https  
+   
+- import_role:
+    name: httpd
+    tasks_from: pki-tls
+  vars:
+    pki_hostname: "{{ mirmon_public_hostname }}"
+  notify:
+    - restart_httpd
+  tags:
+    - tls
+  when: mirmon_https  
 

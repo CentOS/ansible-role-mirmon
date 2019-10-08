@@ -185,7 +185,7 @@ DROP TABLE IF EXISTS `repos`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `repos` (
   `repo_id` mediumint(8) unsigned NOT NULL AUTO_INCREMENT,
-  `major_release` tinyint(3) unsigned NOT NULL,
+  `major_release` varchar(20) DEFAULT NULL,
   `path` varchar(100) NOT NULL,
   `name` varchar(100) NOT NULL,
   `arch` varchar(20) NOT NULL,

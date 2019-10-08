@@ -5,13 +5,16 @@ mirmon_db_name: mirmon
 mirmon_db_user: mirmon
 mirmon_db_pass: 7Q7tNxDiwQlNw34I5W
 
-
 # Official mirrorlists/isoredirect nodes to which we want to push lists
 mirmon_mirrorlist_servers:
   - ml1.dev.centos.org
   - ml2.dev.centos.org
 # Do we want to push after each crawler process
 mirmon_push_to_mirrorlist_servers: False
+
+# Http/apache settings
+mirmon_https: True
+mirmon_public_hostname: "{{ inventory_hostname }}"
 
 # Which local user should launch crawler processes
 mirmon_local_user: centos
@@ -24,6 +27,7 @@ mirmon_mirrorlist_current_releases:
   - 7.7.1908 centos
   - 7.7.1908 altarch
   - 8.0.1905 centos
+  - 8-stream centos
 
 # Which centos releases we need to clear for mirrorlists (old releases and no need to crawl anymore)
 mirmon_mirrorlist_old_releases:
@@ -41,3 +45,13 @@ mirmon_isolist_current_releases:
 # Which centos releases we need to clear for mirrorlists (old releases and no need to crawl anymore)
 mirmon_isolist_old_releases:
   - 6.9 centos i386,x86_64
+
+# Defines which major release points/symlinks to which release
+# Not needed for 8-stream : just 8-stream
+mirmon_centos_releases:
+  - major: 6
+    release: "6.10"
+  - major: 7
+    release: 7.7.1908
+  - major: 8
+    release: 8.0.1905
