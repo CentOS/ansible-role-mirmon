@@ -55,3 +55,12 @@ mirmon_centos_releases:
     release: 7.7.1908
   - major: 8
     release: 8.0.1905
+
+# CentOS releases that will be hidden from generated rsync template
+# Basically WIP but not released yet
+mirmon_centos_unreleased: "6.11 7.8.2005 8.1.xxxx"
+
+
+
+# Which gpg symmetric passphrase to use to encrypt ACL file
+mirmon_gpg_pass: juCno9zw7UQti4nT

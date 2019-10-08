@@ -1,0 +1,52 @@
+#!/bin/bash
+
+#
+# CentOS update msync/rsync ACL script
+# Called by : cron, managed by: Ansible
+# purposes: download the generated template from IP addresses coming
+#  from mysql DB for external mirrors (no need to use git for this)
+#
+
+PATH=$PATH:/usr/local/bin:/sbin:/usr/sbin/
+
+local_checksum_file="https://mirror-status.centos.org/01_CentOS.conf.gpg.checkum"
+sql_query="/var/lib/centos-mirrors/get_iplist.sql"
+rsyncd_template="/var/lib/centos-mirrors/rsync_template.tpl"
+local_file="/var/tmp/01_CentOS.conf"
+local_gpg_file="/var/www/mirmon-status/01_CentOS.conf.gpg"
+gpg_passphrase="{{ mirmon_gpg_pass }}"
+log_file="/var/lib/centos-mirrors/centos_update_acl.log"
+
+function f_log() {
+        echo "[*] $(date +%Y%m%d-%H:%M) : -> $*" >> $log_file
+}
+
+function f_errorcheck() {
+ if [ "$?" = "0" ]; then
+   f_log "$* : PASS => continuing ..."
+ else
+   f_log "$* : FAIL => exiting ..."
+   exit 1
+ fi
+}
+
+# init IPLIST variables from mysql
+IPLIST=$(mysql --skip-column-names {{ mirmon_db_name }} < $sql_query |tr '\n' ' ')
+
+if [ "$(echo $IPLIST|wc -w)" -lt "100" ]; then
+  f_log "Mysql $sql_query query produced an invalid IPLIST. Exiting ..."
+  exit 1
+fi
+
+# Producing now a temporary file
+mv ${local_file} ${local_file}.old
+f_log "Generating $local_file from ${rsyncd_template}"
+cat ${rsyncd_template} |sed "s#IPLIST#$IPLIST#" > $local_file
+
+if [ "$(sha256sum ${local_file}.old|awk '{print $1}')" == "$(sha256sum ${local_file}|awk '{print $1}')" ] ;then
+  f_log "Generated ${local_file} has same sha256sum, exiting ..."
+else
+  gpg --passphrase ${gpg_passphrase} --batch --yes --symmetric --output ${local_gpg_file} 2>/dev/null $local_file
+  f_errorcheck "GPG encrypting operation for $local_gpg_file"
+  sha256sum ${local_gpg_file} > ${local_gpg_file}.checksum
+fi

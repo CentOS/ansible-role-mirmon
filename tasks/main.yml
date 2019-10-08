@@ -187,3 +187,23 @@
   tags:
     - links
 
+# ACLs for msync network
+- name: Configuring msync acl script
+  template:
+    src: "{{ item }}.j2"
+    dest: "/var/lib/centos-mirrors/{{ item }}"
+  with_items:
+    - gen_msync_acl
+    - get_iplist.sql
+    - rsync_template.tpl
+  tags:
+    - acls
+
+- name: Generating msync ACL rsync file
+  cron:
+    name: Msync ACL 
+    job: "/var/lib/centos-mirrors/gen_msync_acl"
+    minute: "*/4"
+  tags:
+    - cron
+   
