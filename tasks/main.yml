@@ -52,6 +52,7 @@
     - perl-DBI
     - perl-DBD-MySQL
     - perl-Config-Simple
+    - wget
 
 - name: Configuring mirmon/crawler files
   template:
