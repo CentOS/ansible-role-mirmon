@@ -4,6 +4,9 @@
   tags:
     - httpd
 
+- import_role:
+    name: geoip2
+
 - name: Ensuring we have a place to store files
   file:
     path: "{{ item }}"
@@ -202,7 +205,7 @@
 - name: Generating msync ACL rsync file
   cron:
     name: Msync ACL 
-    job: "/var/lib/centos-mirrors/gen_msync_acl"
+    job: "bash /var/lib/centos-mirrors/gen_msync_acl"
     minute: "*/4"
   tags:
     - cron
