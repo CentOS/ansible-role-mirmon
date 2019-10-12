@@ -102,7 +102,7 @@
 - name: Various cron jobs for mirmon
   cron:
     name: "mirmon - {{ item }}"
-    job: "{{ item }}"
+    job: "{{ item }} >/dev/null 2>&1"
     user: "{{ mirmon_local_user }}"
     minute: "*/20"
   with_items:
