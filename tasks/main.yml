@@ -191,8 +191,8 @@
   tags:
     - links
 
-# ACLs for msync network
-- name: Configuring msync acl script
+# ACLs for msync network and new repos check
+- name: Configuring scripts
   template:
     src: "{{ item }}.j2"
     dest: "/var/lib/centos-mirrors/{{ item }}"
@@ -200,8 +200,10 @@
     - gen_msync_acl
     - get_iplist.sql
     - rsync_template.tpl
+    - new_repos_check
   tags:
     - acls
+    - scripts
 
 - name: Generating msync ACL rsync file
   cron:
@@ -210,4 +212,14 @@
     minute: "*/4"
   tags:
     - cron
-   
+  
+- name: Checking for new repos
+  cron:
+    name: New repos check
+    job: "bash /var/lib/centos-mirrors/new_repos_check"
+    minute: "*/30"
+    user: "{{ mirmon_local_user }}"
+  tags:
+    - cron
+  
+

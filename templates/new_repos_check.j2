@@ -1,0 +1,50 @@
+#!/bin/bash
+
+#
+# CentOS new repos check for crawler
+# Called by : cron, managed by: Ansible
+# purposes: rsync directories from msync/mirror to find new repositories and
+#  add those automatically to mirmon db for crawler
+#
+
+
+# Some variables
+msync_source="{{ mirmon_rsync_source }}"
+local_dir="/var/tmp/centos/"
+log="/var/tmp/new_repos_check.log"
+mirror_db="{{ mirmon_db_name }}"
+
+function f_log() {
+        echo "[*] $(date +%Y%m%d-%H:%M) : -> $*" >> $log_file
+}
+
+
+test -d ${local_dir} || mkdir -p ${local_dir}
+
+rsync --contimeout=15 -4 -aH --filter '+ */' --filter '- *' --filter '+ */repodata/repomd.xml' ${msync_source}/ ${local_dir}/  --copy-links >/dev/null 2>&1 
+
+if [ "$?" -ne "0" ] ;then
+  f_log "Issue pulling from ${msync_source}. Check access" 
+  exit 1
+fi
+
+pushd ${local_dir} >/dev/null
+find ./ -iname repodata|egrep '/centos/|/altarch/'|egrep '/6/|/7/|/8/|/8-stream/' |egrep -v 'kickstart'| sed 's|./||' | sed 's#/# #g' |sed 's/repodata//g'| while read line; do
+
+  contentdir=$(echo $line|awk '{print $1}') 
+  if [ "$contentdir" == "altarch" ] ; then
+    altarch='1'
+  else
+    altarch='0'
+  fi
+  release=$(echo $line|awk '{print $2}')
+  arch=$(echo $line|egrep --only-matching 'x86_64|i386|aarch64|ppc64|ppc64le|armhfp|power9') 
+  path=$(echo $line|cut -f 3- -d ' '|sed 's# #/#g')
+  repo_name=$(echo $line|cut -f 3- -d ' '|sed "s/ $arch//g" | sed 's# #-#g' | tr A-Z a-z )
+  if [[ "$release" == 8* ]] ; then 
+    repo_name=${repo_name%-os} 
+  fi
+  echo "INSERT IGNORE INTO repos (major_release, path, name, arch, altarch, enabled) VALUES ('${release}', '${path}', '${repo_name}', '${arch}', ${altarch}, 'yes');" | mysql ${mirror_db} 
+done
+popd >/dev/null
+

@@ -29,4 +29,8 @@
     - "{{ mirmon_local_path }}/ipv6/altarch"
     - "{{ mirmon_local_path }}/logs"
 
-
+- name: Ensuring we can connect to mysql
+  template:
+    src: .my.cnf.j2
+    dest: "/home/{{ mirmon_local_user }}-home/.my.cnf"
+    owner: "{{ mirmon_local_user }}"

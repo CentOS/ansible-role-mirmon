@@ -60,7 +60,10 @@ mirmon_centos_releases:
 # Basically WIP but not released yet
 mirmon_centos_unreleased: "6.11 7.8.2005 8.1.xxxx"
 
-
-
 # Which gpg symmetric passphrase to use to encrypt ACL file
 mirmon_gpg_pass: juCno9zw7UQti4nT
+
+# To check automatically new repositories (including from SIGs, new releases) 
+# we can sync from rsync directory and add to mysql the needed repos/paths
+# From which rsync source we want to pull from ?
+mirmon_rsync_source: mirror.centos.org::centos
