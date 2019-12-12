@@ -10,7 +10,7 @@ mirmon -c /etc/mirmon/mirmonlist.conf -q -get update
 popd
 
 pushd /var/www/mirmon-status
-cat /var/www/centos/header/header.html > index.html
+cat /var/www/centos-design/centos_header.html > index.html
 sed '1,11d' mirmon.html >> index.html
 popd
 
