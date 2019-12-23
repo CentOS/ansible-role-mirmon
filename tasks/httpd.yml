@@ -40,5 +40,6 @@
     - restart_httpd
   tags:
     - tls
+    - pki
   when: mirmon_https  
 

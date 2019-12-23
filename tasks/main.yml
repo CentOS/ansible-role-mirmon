@@ -3,6 +3,8 @@
 - include_tasks: httpd.yml
   tags:
     - httpd
+    - pki
+    - tls
 
 - import_role:
     name: geoip2
