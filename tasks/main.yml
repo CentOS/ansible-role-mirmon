@@ -43,18 +43,10 @@
 
 - name: Ensuring we have some needed pkgs installed
   yum: 
-    name: "{{ item }}"
+    name: ['mirmon', 'mirmon-httpd', 
+'perl-libwww-perl', 'perl-Socket6', 'perl-IO-Socket-INET6', 'perl-DBI', 'perl-DBD-MySQL', 'perl-Config-Simple', 
+'wget']
     state: latest
-  with_items:
-    - mirmon
-    - mirmon-httpd
-    - perl-libwww-perl
-    - perl-Socket6
-    - perl-IO-Socket-INET6
-    - perl-DBI
-    - perl-DBD-MySQL
-    - perl-Config-Simple
-    - wget
 
 - name: Configuring mirmon/crawler files
   template:
