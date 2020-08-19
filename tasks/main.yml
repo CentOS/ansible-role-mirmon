@@ -22,6 +22,7 @@
   template:
     src: "{{ item }}.j2"
     dest: "/var/lib/centos-mirrors/{{ item }}"
+    mode: 0644
   with_items:
     - mirmon-schema.sql
     - full-mirrorlist.sql 
@@ -52,6 +53,7 @@
   template:
     src: "{{ item }}.j2"
     dest: "/etc/mirmon/{{ item }}"
+    mode: 0644
   with_items:
     - centos-mirrors.cfg
     - centos-ml.cfg
@@ -64,6 +66,7 @@
   copy:
     src: geo_cc.pm
     dest: /usr/share/perl5/vendor_perl/geo_cc.pm
+    mode: 0644
   tags:
     - geo
 
@@ -190,6 +193,7 @@
   template:
     src: "{{ item }}.j2"
     dest: "/var/lib/centos-mirrors/{{ item }}"
+    mode: 0755
   with_items:
     - gen_msync_acl
     - get_iplist.sql
