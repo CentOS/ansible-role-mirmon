@@ -174,7 +174,7 @@
     src: "{{ item.release }}"
     state: link
     force: yes
-  with_items: "{{ mirmon_centos_releases }}" 
+  with_items: "{{ mirmon_altarch_releases }}" 
   tags:
     - links
 
@@ -184,7 +184,7 @@
     src: "{{ item.release }}"
     state: link
     force: yes
-  with_items: "{{ mirmon_centos_releases }}" 
+  with_items: "{{ mirmon_altarch_releases }}" 
   tags:
     - links
 

@@ -56,6 +56,14 @@ mirmon_centos_releases:
   - major: 8
     release: 8.0.1905
 
+# Just for /altarch/ in case they are not in sync with centos_releases (think armhfp)
+mirmon_altarch_releases:
+  - major: 7
+    release: 7.7.1908
+  - major: 8
+    release: 8.0.1905
+  
+
 # CentOS releases that will be hidden from generated rsync template
 # Basically WIP but not released yet
 mirmon_centos_unreleased: "6.11 7.8.2005 8.1.xxxx"
