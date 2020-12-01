@@ -80,5 +80,6 @@ else
 
 fi
 
-# cleaning up old log files
+# cleaning up old log files and stuck pid files
 find /home/centos-mirrorlists/logs/ -type f -mmin +240 -exec /bin/rm '{}' \;
+find /var/tmp/ -type f -iname 'make*.pid' -mmin +360 -exec /bin/rm '{}' ';'
