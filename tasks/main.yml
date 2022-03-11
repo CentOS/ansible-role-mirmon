@@ -85,6 +85,7 @@
     - centos-crawler
     - makeisolists-combined.pl
     - makemirrorlists-combined.pl
+    - mirror-geo-check.py
   tags:
     - mirmon
 
