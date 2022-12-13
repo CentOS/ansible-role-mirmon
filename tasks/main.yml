@@ -199,6 +199,7 @@
     - gen_msync_acl
     - get_iplist.sql
     - rsync_template.tpl
+    - rsync_stream_template.tpl
     - new_repos_check
   tags:
     - acls

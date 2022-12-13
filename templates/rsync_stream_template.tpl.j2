@@ -1,0 +1,23 @@
+[CentOS-Stream-All]
+       path = /home/centos-stream
+       comment = The official CentOS Stream Mirror
+       list = no
+       hosts allow = IPLIST
+       hosts deny = *
+
+[CentOS-Stream-nodebug]
+       path = /home/centos-stream
+       comment = The official CentOS Stream Mirror
+       exclude = *debuginfo*.rpm  *debug/tree/repodata/* *debugsource* *kernel-rt-*debug* *kernel-debug* *debug/repodata/*
+       list = no
+       hosts allow = IPLIST
+       hosts deny = *
+
+[CentOS-Stream-nosrc]
+       path = /home/centos-stream
+       comment = The official CentOS Stream Mirror
+       exclude = *.src.rpm
+       list = no
+       hosts allow = IPLIST
+       hosts deny = *
+
